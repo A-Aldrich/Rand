@@ -19,9 +19,9 @@ public class Main extends Game{
     }
     public Main(String name, boolean fullscreen) {
         super(name, !fullscreen);
-        
         run();
     }
+    @Override
     public void initVars(){
         
         gen = new Random();

@@ -87,22 +87,22 @@ public class Renderer {
         switch(mode){
             case SIMPLE:
                 if(vertices instanceof ColoredVertex[]){
-                    
+                    simpleBuffer = BufferUtils.createFloatBuffer(
+                            (ColoredVertex.num_elements + Vertex.num_elements) * vertices.length);
                     for(ColoredVertex v : (ColoredVertex[])vertices){
-                        simpleBuffer = BufferUtils.createFloatBuffer((ColoredVertex.num_elements + Vertex.num_elements) * vertices.length);
                         simpleBuffer.put(v.getCoords());
                         simpleBuffer.put(v.getRGBA());
                     }
                     simpleBuffer.flip();
                     
                     glBindVertexArray(simpleVAO);
-                    GL20.glVertexAttribPointer(0, Vertex.num_elements, GL11.GL_FLOAT, false, 
-                            Vertex.element_size, 0);
+                    glBindBuffer(GL_ARRAY_BUFFER, simpleVBO);
+                    
+                    glBufferData(GL_ARRAY_BUFFER, simpleBuffer, GL_STATIC_DRAW);
+                    GL20.glVertexAttribPointer(0, 4, GL11.GL_FLOAT, false, 
+                            ColoredVertex.getSize(), 0);
                     GL20.glVertexAttribPointer(1, ColoredVertex.num_elements, GL_FLOAT, false, 
-                            Vertex.element_size, Vertex.getSize());
-                    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-                    
-                    
+                           ColoredVertex.getSize(), Vertex.getSize());
                     glEnableVertexAttribArray(0);
                     glEnableVertexAttribArray(1);
                     glUseProgram(simpleShaderID);
@@ -122,9 +122,9 @@ public class Renderer {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW);
         // render
-        System.out.println("render");
+        
         glDrawElements(GL_TRIANGLES, vertOrder.length, GL_UNSIGNED_BYTE, 0);
-        indexBuffer.clear();
+        System.out.println("render");
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         
         // unload data

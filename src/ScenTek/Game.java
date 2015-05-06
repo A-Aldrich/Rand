@@ -70,7 +70,7 @@ public abstract class Game extends GLFWKeyCallback{
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if ( glfwInit() != GL_TRUE )
             throw new IllegalStateException("Unable to initialize GLFW");
-        
+        initVars();
  
         
     }
