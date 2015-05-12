@@ -14,11 +14,11 @@ public class Main extends Game{
         new Main("Hello!", true);
     }
     public Main(String name){
-        this(name, true);
+        this(name, false);
         
     }
     public Main(String name, boolean fullscreen) {
-        super(name, !fullscreen);
+        super(name, fullscreen);
         run();
     }
     @Override

@@ -99,13 +99,20 @@ public class Renderer {
                     glBindBuffer(GL_ARRAY_BUFFER, simpleVBO);
                     
                     glBufferData(GL_ARRAY_BUFFER, simpleBuffer, GL_STATIC_DRAW);
-                    GL20.glVertexAttribPointer(0, 4, GL11.GL_FLOAT, false, 
-                            ColoredVertex.getSize(), 0);
-                    GL20.glVertexAttribPointer(1, ColoredVertex.num_elements, GL_FLOAT, false, 
-                           ColoredVertex.getSize(), Vertex.getSize());
+                    byte stride = (byte)ColoredVertex.getSize();
+                    int offset = 0;
+                    glVertexPointer(Vertex.num_elements,GL_FLOAT, stride, offset);
+                    
+                    stride = (byte)ColoredVertex.getSize();
+                    offset = 4*4;
+                    glVertexPointer(Vertex.num_elements,GL_FLOAT, stride, offset);
+                    
+                    glUseProgram(simpleShaderID);
                     glEnableVertexAttribArray(0);
                     glEnableVertexAttribArray(1);
-                    glUseProgram(simpleShaderID);
+                    glBindBuffer(GL_ARRAY_BUFFER, 0);
+                    
+                    
                 }
                 
                 else throw new IllegalArgumentException("Wrong Vertex Type Passed");
@@ -122,9 +129,7 @@ public class Renderer {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW);
         // render
-        
         glDrawElements(GL_TRIANGLES, vertOrder.length, GL_UNSIGNED_BYTE, 0);
-        System.out.println("render");
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         
         // unload data
@@ -141,32 +146,5 @@ public class Renderer {
                 break;
         }
     }
-    
-    private float[][] processVerts(Vertex[] verts, RenderMode mode){
-        float[][] vertData = null;
-        switch(mode){
-            case SIMPLE:
-                vertData = new float[2][];
-                vertData[0] = new float[Vertex.num_elements*verts.length]; //coords
-                vertData[1] = new float[4*verts.length]; // color
-                for(int i = 0; i < vertData[0].length;i+=Vertex.num_elements){
-                    float[] v = verts[i/4].getCoords();
-                    vertData[0][i] = v[0];
-                    vertData[0][i+1] = v[1];
-                    vertData[0][i+2] = v[2];
-                    vertData[0][i+3] = v[3];
-                }
-                for(int i = 0; i < vertData[1].length; i+= 4){
-                    float[] v = ((ColoredVertex)verts[i/4]).getRGBA();
-                    vertData[1][i] = v[0];
-                    vertData[1][i+1] = v[1];
-                    vertData[1][i+2] = v[2];
-                    vertData[1][i+3] = v[3];
-                }
-                break;
-        }
-        return vertData;
-    }
-    
     
 }
